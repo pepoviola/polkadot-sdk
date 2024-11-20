@@ -639,6 +639,7 @@ impl NetworkBehaviour for DiscoveryBehaviour {
 		addresses: &[Multiaddr],
 		effective_role: Endpoint,
 	) -> Result<Vec<Multiaddr>, ConnectionDenied> {
+		trace!(target: "sub-libp2p", "[Javier]: on 'handle_pending_outbound_connection', maybe_peer: {:?}, permanent_addresses: {:?}, ephemeral_addresses: {:?}", maybe_peer, self.permanent_addresses, self.ephemeral_addresses);
 		let Some(peer_id) = maybe_peer else { return Ok(Vec::new()) };
 
 		// Collect addresses into [`LinkedHashSet`] to eliminate duplicate entries preserving the

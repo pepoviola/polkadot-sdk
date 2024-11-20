@@ -583,13 +583,16 @@ async fn determine_cores(
 	relay_parent_mode: ProspectiveParachainsMode,
 ) -> Result<(Vec<CoreIndex>, usize)> {
 	let cores = get_availability_cores(sender, relay_parent).await?;
+	println!("[Javier] cores: {:?} ", cores);
 	let n_cores = cores.len();
 	let mut assigned_cores = Vec::new();
 	let maybe_claim_queue = fetch_claim_queue(sender, relay_parent).await?;
 
 	for (idx, core) in cores.iter().enumerate() {
+		println!("[Javier] core: {:?} ", core);
 		let core_is_scheduled = match maybe_claim_queue {
 			Some(ref claim_queue) => {
+				println!("[Javier] claim_queue: {:?} ", claim_queue.0);
 				// Runtime supports claim queue - use it.
 				claim_queue
 					.iter_claims_for_core(&CoreIndex(idx as u32))
@@ -610,6 +613,7 @@ async fn determine_cores(
 		}
 	}
 
+	println!("[Javier] assigned_cores: {:?}, n_cores {:?} ", assigned_cores, n_cores);
 	Ok((assigned_cores, n_cores))
 }
 
@@ -635,17 +639,23 @@ async fn determine_our_validators<Context>(
 	relay_parent: Hash,
 ) -> Result<GroupValidators> {
 	let session_index = runtime.get_session_index_for_child(ctx.sender(), relay_parent).await?;
+	println!("[Javier] session_index: {}", session_index);
 	let info = &runtime
 		.get_session_info_by_index(ctx.sender(), relay_parent, session_index)
 		.await?
 		.session_info;
 	gum::debug!(target: LOG_TARGET, ?session_index, "Received session info");
+	println!("[Javier] info: {:?}", info);
 	let groups = &info.validator_groups;
 	let rotation_info = get_group_rotation_info(ctx.sender(), relay_parent).await?;
+	println!("[Javier] rotation_info: {:?}", rotation_info);
 
 	let current_group_index = rotation_info.group_for_core(core_index, cores);
+	println!("[Javier] current_group_index: {:?}", current_group_index);
 	let current_validators =
 		groups.get(current_group_index).map(|v| v.as_slice()).unwrap_or_default();
+
+	println!("[Javier] current_validators: {:?}", current_validators);
 
 	let validators = &info.discovery_keys;
 

@@ -109,6 +109,8 @@ impl TraitPair for Pair {
 	///
 	/// Returns true if the signature is good.
 	fn verify<M: AsRef<[u8]>>(sig: &Signature, message: M, public: &Public) -> bool {
+		#[cfg(feature = "std")]
+		println!("PASE ed25519 verify!");
 		let Ok(public) = VerificationKey::try_from(public.as_slice()) else { return false };
 		let Ok(signature) = ed25519_zebra::Signature::try_from(sig.as_slice()) else {
 			return false

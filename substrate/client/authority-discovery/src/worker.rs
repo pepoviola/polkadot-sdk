@@ -376,11 +376,14 @@ where
 	fn addresses_to_publish(&self) -> impl Iterator<Item = Multiaddr> {
 		let local_peer_id = self.network.local_peer_id();
 		let publish_non_global_ips = self.publish_non_global_ips;
+		debug!(target: LOG_TARGET, "public addresses {:?}", self.public_addresses);
+		debug!(target: LOG_TARGET, "public external_addresses {:?}", self.network.external_addresses());
 		let addresses = self
 			.public_addresses
 			.clone()
 			.into_iter()
 			.chain(self.network.external_addresses().into_iter().filter_map(|mut address| {
+				debug!(target: LOG_TARGET, "checking address {:?}", address);
 				// Make sure the reported external address does not contain `/p2p/...` protocol.
 				if let Some(multiaddr::Protocol::P2p(peer_id)) = address.iter().last() {
 					if peer_id != *local_peer_id.as_ref() {
@@ -396,6 +399,7 @@ where
 
 				if self.public_addresses.contains(&address) {
 					// Already added above.
+					debug!(target: LOG_TARGET, "address {} is in public addresses {:?}, returning NONE", &address, self.public_addresses);
 					None
 				} else {
 					Some(address)
@@ -416,6 +420,7 @@ where
 			})
 			.collect::<Vec<_>>();
 
+		debug!(target: LOG_TARGET, "addresses {:?} ", &addresses);
 		if !addresses.is_empty() {
 			debug!(
 				target: LOG_TARGET,

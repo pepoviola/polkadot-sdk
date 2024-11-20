@@ -85,10 +85,20 @@ impl RelayChainInterface for RelayChainInProcessInterface {
 		para_id: ParaId,
 		relay_parent: PHash,
 	) -> RelayChainResult<BTreeMap<ParaId, Vec<InboundHrmpMessage>>> {
-		Ok(self
-			.full_client
-			.runtime_api()
-			.inbound_hrmp_channels_contents(relay_parent, para_id)?)
+		println!("[Javier] called `retrieve_all_inbound_hrmp_channel_contents` ");
+		let res = self
+		.full_client
+		.runtime_api()
+		.inbound_hrmp_channels_contents(relay_parent, para_id)?;
+
+		println!("[Javier] res: {:?}", res);
+
+		Ok(res)
+
+		// Ok(self
+		// 	.full_client
+		// 	.runtime_api()
+		// 	.inbound_hrmp_channels_contents(relay_parent, para_id)?)
 	}
 
 	async fn header(&self, block_id: BlockId) -> RelayChainResult<Option<PHeader>> {

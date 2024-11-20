@@ -15,6 +15,7 @@ name = "polkadot-parachain"
 path = "src/main.rs"
 
 [[bin]]
+# SKIP_WASM_BUILD=1 cargo build --release -p polkadot-parachain-bin --bin doppelganger-parachain
 name = "doppelganger-parachain"
 path = "src/doppelganger.rs"
 

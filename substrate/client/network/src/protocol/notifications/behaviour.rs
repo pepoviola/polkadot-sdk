@@ -1607,6 +1607,7 @@ impl NetworkBehaviour for Notifications {
 				}
 			},
 			FromSwarm::DialFailure(DialFailure { peer_id, error, .. }) => {
+				println!("[Javier]: Dial error is: {:?} for peerId: {:?}", error, peer_id);
 				if let DialError::Transport(errors) = error {
 					for (addr, error) in errors.iter() {
 						trace!(target: "sub-libp2p", "Libp2p => Reach failure for {:?} through {:?}: {:?}", peer_id, addr, error);

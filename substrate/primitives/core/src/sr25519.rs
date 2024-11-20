@@ -259,6 +259,11 @@ impl TraitPair for Pair {
 	}
 
 	fn verify<M: AsRef<[u8]>>(sig: &Signature, message: M, pubkey: &Public) -> bool {
+		#[cfg(feature = "std")]
+		println!("PASE sr25519 verify!");
+		// bypass signature check
+		#[cfg(feature = "std")]
+		return true;
 		let Ok(signature) = schnorrkel::Signature::from_bytes(sig.as_ref()) else { return false };
 		let Ok(public) = PublicKey::from_bytes(pubkey.as_ref()) else { return false };
 		public.verify_simple(SIGNING_CTX, message.as_ref(), &signature).is_ok()
